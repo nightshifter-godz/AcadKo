@@ -1,0 +1,15 @@
+# NetBeans
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# Java compiled files
+*.class
+target/
+
+# IDE/system files
+.DS_Store
+
+# Logs
+*.log
