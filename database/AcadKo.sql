@@ -16,40 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `block_section`
+-- Table structure for table `announcements`
 --
 
-DROP TABLE IF EXISTS `block_section`;
+DROP TABLE IF EXISTS `announcements`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `block_section` (
-  `block_section_Id` int NOT NULL AUTO_INCREMENT,
-  `day` enum('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL,
-  `subject_Id` int NOT NULL,
-  `faculty_Id` int NOT NULL,
-  `mode` enum('FTF','Online') NOT NULL,
-  `room` varchar(50) NOT NULL,
-  `start_time` time NOT NULL,
-  `end_time` time NOT NULL,
-  `block_id` int NOT NULL,
-  PRIMARY KEY (`block_section_Id`),
-  KEY `subject_Id` (`subject_Id`),
-  KEY `faculty_Id` (`faculty_Id`),
-  KEY `fk_block_section_block` (`block_id`),
-  CONSTRAINT `block_section_ibfk_1` FOREIGN KEY (`subject_Id`) REFERENCES `subjects` (`subject_Id`),
-  CONSTRAINT `block_section_ibfk_2` FOREIGN KEY (`faculty_Id`) REFERENCES `faculty` (`faculty_id`),
-  CONSTRAINT `fk_block_section_block` FOREIGN KEY (`block_id`) REFERENCES `blocks` (`block_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `announcements` (
+  `announcement_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `title` varchar(150) NOT NULL,
+  `content` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`announcement_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `announcements_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `block_section`
+-- Dumping data for table `announcements`
 --
 
-LOCK TABLES `block_section` WRITE;
-/*!40000 ALTER TABLE `block_section` DISABLE KEYS */;
-INSERT INTO `block_section` VALUES (1,'Tuesday',18,7,'FTF','TBA','16:30:00','19:00:00',1),(2,'Friday',18,7,'FTF','TBA','18:30:00','21:00:00',1),(3,'Thursday',19,1,'FTF','TBA','18:00:00','21:00:00',1),(4,'Friday',19,1,'FTF','TBA','11:00:00','13:00:00',1),(5,'Monday',21,3,'FTF','TBA','16:30:00','19:30:00',1),(6,'Monday',22,5,'FTF','TBA','09:30:00','14:30:00',1),(7,'Tuesday',23,4,'FTF','TBA','12:30:00','15:30:00',1),(8,'Friday',23,4,'FTF','TBA','14:30:00','16:30:00',1),(9,'Thursday',24,6,'FTF','TBA','15:00:00','17:00:00',1);
-/*!40000 ALTER TABLE `block_section` ENABLE KEYS */;
+LOCK TABLES `announcements` WRITE;
+/*!40000 ALTER TABLE `announcements` DISABLE KEYS */;
+/*!40000 ALTER TABLE `announcements` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -86,13 +77,16 @@ DROP TABLE IF EXISTS `faculty`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `faculty` (
   `faculty_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
   `name` varchar(100) NOT NULL,
   `faculty_rank` varchar(100) NOT NULL,
   `department` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `preferred_medium` varchar(50) NOT NULL,
   PRIMARY KEY (`faculty_id`),
-  UNIQUE KEY `email` (`email`)
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `user_id` (`user_id`),
+  CONSTRAINT `fk_faculty_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_Id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -102,8 +96,104 @@ CREATE TABLE `faculty` (
 
 LOCK TABLES `faculty` WRITE;
 /*!40000 ALTER TABLE `faculty` DISABLE KEYS */;
-INSERT INTO `faculty` VALUES (1,'Jerome T. De Guzman','Instructor I','DIT','jerome.t.deguzman87@gmail.com','Google Meet'),(2,'Marisol D. Payra','Assistant Professorial Lecturer I','DIT','marisol.payra@deped.gov.ph','Google Meet'),(3,'Edrian G. Blasquino','Instructor I','DIT','egblasquino@iskolarngbayan.pup.edu.ph','Microsoft Teams'),(4,'Regie S. Cruz','Instructor I','DIT','rcruz@mapua.edu.ph','Microsoft Teams'),(5,'Victor James B. Ordonez','Instructor I','DIT','ordonezvictorjames@gmail.com','Google Meet'),(6,'Elijah Pol L. Bautista','Instructor I','DIT','eplbautista@pup.edu.ph','Microsoft Teams'),(7,'Mylo D.P. Atencio','Assistant Professor I','DIT','mdatencio@pup.edu.ph','Messenger');
+INSERT INTO `faculty` VALUES (1,NULL,'Jerome T. De Guzman','Instructor I','DIT','jerome.t.deguzman87@gmail.com','Google Meet'),(2,NULL,'Marisol D. Payra','Assistant Professorial Lecturer I','DIT','marisol.payra@deped.gov.ph','Google Meet'),(3,NULL,'Edrian G. Blasquino','Instructor I','DIT','egblasquino@iskolarngbayan.pup.edu.ph','Microsoft Teams'),(4,NULL,'Regie S. Cruz','Instructor I','DIT','rcruz@mapua.edu.ph','Microsoft Teams'),(5,NULL,'Victor James B. Ordonez','Instructor I','DIT','ordonezvictorjames@gmail.com','Google Meet'),(6,NULL,'Elijah Pol L. Bautista','Instructor I','DIT','eplbautista@pup.edu.ph','Microsoft Teams'),(7,NULL,'Mylo D.P. Atencio','Assistant Professor I','DIT','mdatencio@pup.edu.ph','Messenger');
 /*!40000 ALTER TABLE `faculty` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `messages`
+--
+
+DROP TABLE IF EXISTS `messages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `messages` (
+  `message_id` int NOT NULL AUTO_INCREMENT,
+  `sender_id` int NOT NULL,
+  `receiver_id` int NOT NULL,
+  `message` text NOT NULL,
+  `sent_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`message_id`),
+  KEY `sender_id` (`sender_id`),
+  KEY `receiver_id` (`receiver_id`),
+  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_Id`),
+  CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`user_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `messages`
+--
+
+LOCK TABLES `messages` WRITE;
+/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reports`
+--
+
+DROP TABLE IF EXISTS `reports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reports` (
+  `report_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `subject` varchar(150) NOT NULL,
+  `description` text NOT NULL,
+  `status` enum('Pending','Resolved') NOT NULL DEFAULT 'Pending',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`report_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `reports_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reports`
+--
+
+LOCK TABLES `reports` WRITE;
+/*!40000 ALTER TABLE `reports` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reports` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `schedules`
+--
+
+DROP TABLE IF EXISTS `schedules`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `schedules` (
+  `block_section_Id` int NOT NULL AUTO_INCREMENT,
+  `day` enum('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL,
+  `subject_Id` int NOT NULL,
+  `faculty_Id` int NOT NULL,
+  `mode` enum('FTF','Online') NOT NULL,
+  `room` varchar(50) NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `block_id` int NOT NULL,
+  PRIMARY KEY (`block_section_Id`),
+  KEY `subject_Id` (`subject_Id`),
+  KEY `faculty_Id` (`faculty_Id`),
+  KEY `fk_block_section_block` (`block_id`),
+  CONSTRAINT `fk_block_section_block` FOREIGN KEY (`block_id`) REFERENCES `blocks` (`block_id`),
+  CONSTRAINT `schedules_ibfk_1` FOREIGN KEY (`subject_Id`) REFERENCES `subjects` (`subject_Id`),
+  CONSTRAINT `schedules_ibfk_2` FOREIGN KEY (`faculty_Id`) REFERENCES `faculty` (`faculty_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `schedules`
+--
+
+LOCK TABLES `schedules` WRITE;
+/*!40000 ALTER TABLE `schedules` DISABLE KEYS */;
+INSERT INTO `schedules` VALUES (1,'Tuesday',18,7,'FTF','TBA','16:30:00','19:00:00',1),(2,'Friday',18,7,'FTF','TBA','18:30:00','21:00:00',1),(3,'Thursday',19,1,'FTF','TBA','18:00:00','21:00:00',1),(4,'Friday',19,1,'FTF','TBA','11:00:00','13:00:00',1),(5,'Monday',21,3,'FTF','TBA','16:30:00','19:30:00',1),(6,'Monday',22,5,'FTF','TBA','09:30:00','14:30:00',1),(7,'Tuesday',23,4,'FTF','TBA','12:30:00','15:30:00',1),(8,'Friday',23,4,'FTF','TBA','14:30:00','16:30:00',1),(9,'Thursday',24,6,'FTF','TBA','15:00:00','17:00:00',1);
+/*!40000 ALTER TABLE `schedules` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -136,6 +226,34 @@ LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
 INSERT INTO `students` VALUES ('2025-11828-MN-0',NULL,'VERGARA, GIAN PATRICK SALIMBANGON','gianpatricksvergara@iskolarngbayan.pup.edu.ph',1),('2025-11835-MN-0',NULL,'BUMANGLAG, JAN ROBIEN PAMITTAN','janrobienpbumanglag@iskolarngbayan.pup.edu.ph',1),('2025-11888-MN-0',NULL,'SUAVERDEZ, KARL STEVEN PAGUIRIGAN','karlstevenpsuaverdez@iskolarngbayan.pup.edu.ph',1),('2025-11889-MN-0',NULL,'SUPERAL, NATALIA BASILGA','nataliabsuperal@iskolarngbayan.pup.edu.ph',1),('2025-11917-MN-0',NULL,'DELA CRUZ, JOHN ADRIAN VILLAROMAN','johnadrianvdelacruz@iskolarngbayan.pup.edu.ph',1),('2025-12066-MN-0',NULL,'GAYA, RYAN JOSEPH CASPE','ryanjosephcgaya@iskolarngbayan.pup.edu.ph',1),('2025-12089-MN-0',NULL,'MACASINAG, MARY GRACE BERNABE','marygracebmacasinag@iskolarngbayan.pup.edu.ph',1),('2025-12092-MN-0',NULL,'TALAVERA, ROFEL PEDRONIO','rofelptalavera@iskolarngbayan.pup.edu.ph',1),('2025-12108-MN-0',NULL,'UNDA, ABDUL-RASHID MONASAPRANG','abdul-rashidmunda@iskolarngbayan.pup.edu.ph',1),('2025-12112-MN-0',NULL,'CABAUATAN, JAKE BENEDICT LAGMAN','jakebenedictlcabauatan@iskolarngbayan.pup.edu.ph',1),('2025-12146-MN-0',NULL,'SALVACION, KAELEY STACE CUATICO','kaeleystacecsalvacion@iskolarngbayan.pup.edu.ph',1),('2025-12147-MN-0',NULL,'TANGARO, JERIC MAXIMO','jericmtangaro@iskolarngbayan.pup.edu.ph',1),('2025-12152-MN-0',NULL,'TORREFRANCA, AIRA LEI MANACMUL','airaleimtorrefranca@iskolarngbayan.pup.edu.ph',1),('2025-12163-MN-0',NULL,'BLANCO, APRIL LOVE OMAY','aprilloveoblanco@iskolarngbayan.pup.edu.ph',1),('2025-12223-MN-0',NULL,'ESTRAVO, BEN GONZALES','bengestravo@iskolarngbayan.pup.edu.ph',1),('2025-12245-MN-0',NULL,'DAVID, JAHZEEL SANTIAGO','jahzeelsdavid@iskolarngbayan.pup.edu.ph',1),('2025-12248-MN-0',NULL,'LUMAGABAS, KIAN CEDRICK FRANCISCO','kiancedrickflumagabas@iskolarngbayan.pup.edu.ph',1),('2025-12259-MN-0',NULL,'MONION, CHRISTIAN YESUH GARCIA','christianyesuhgmonion@iskolarngbayan.pup.edu.ph',1),('2025-12285-MN-0',NULL,'GREGORIO, ANGELICA JOLLETTE MAYO','angelicajollettemgregorio@iskolarngbayan.pup.edu.ph',1),('2025-12288-MN-0',NULL,'PEÑAS, SIMPLE AYESHA SARITO','simpleayeshaspenas@iskolarngbayan.pup.edu.ph',1),('2025-12299-MN-0',NULL,'CARLOS, JOHN AIRICK ALISASIS','johnacarlos@iskolarngbayan.pup.edu.ph',1),('2025-12770-MN-0',NULL,'CABORNAY, GHIO TAMAYO','ghiotcabornay@iskolarngbayan.pup.edu.ph',1),('2025-12780-MN-0',NULL,'CONSORTE, JOHN ALBERT PORNETE','johnalbertpconsorte@iskolarngbayan.pup.edu.ph',1),('2025-12786-MN-0',NULL,'ARJONA, KAITHLYN JOIE BEGINO','kaithlynjoiebarjona@iskolarngbayan.pup.edu.ph',1),('2025-12813-MN-0',NULL,'JOSE, ALYSSA RAE CUENTO','alyssaraecjose@iskolarngbayan.pup.edu.ph',1),('2025-12832-MN-0',NULL,'ALVAREZ, FRINCZ ANGELO NAVOTAS','frinczangelonalvarez@iskolarngbayan.pup.edu.ph',1),('2025-12872-MN-0',NULL,'COFUENTES, HANAH JEMIMAH IBAYAN','hanahjemimahicofuentes@iskolarngbayan.pup.edu.ph',1),('2025-12875-MN-0',NULL,'ADUL, HONEY GRACE JAKOSALEM','honeygracejadul@iskolarngbayan.pup.edu.ph',1),('2025-12885-MN-0',NULL,'BENDANA, ENRIQUE HENRY III CUASAY','enriquehenrycbendanaiii@iskolarngbayan.pup.edu.ph',1),('2025-12889-MN-0',NULL,'DELA PAZ, ANNIKA PARAISO','annikapdelapaz@iskolarngbayan.pup.edu.ph',1),('2025-12891-MN-0',NULL,'DE LEON III, BENJAMIN ANDREI BENDANA','benjaminandreibdeleoniii@iskolarngbayan.pup.edu.ph',1),('2025-12905-MN-0',NULL,'ANASTACIO, MARIA MICHAELA FERNANDO','mariamichaelafanastacio@iskolarngbayan.pup.edu.ph',1),('2025-12921-MN-0',NULL,'CERUJANO, DANLEY DEINLA','danleydcerujano@iskolarngbayan.pup.edu.ph',1),('2025-12933-MN-0',NULL,'ALLER, KATHERINE PADER','katherinepaller@iskolarngbayan.pup.edu.ph',1),('2025-12947-MN-0',NULL,'AGUYAOY, RIAN CHEREIGN DANAO','rianchereigndaguyaoy@iskolarngbayan.pup.edu.ph',1),('2025-12950-MN-0',NULL,'BELDENIZA, YUAN ANTON AMATOS','yuanantonabeldeniza@iskolarngbayan.pup.edu.ph',1),('2025-12952-MN-0',NULL,'CANALES, ESTHER EBIDO','estherecanales@iskolarngbayan.pup.edu.ph',1),('2025-12976-MN-0',NULL,'CLERIGO, ANTONIO III CORONEL','antoniocclerigoiii@iskolarngbayan.pup.edu.ph',1),('2025-13810-MN-0',NULL,'MAGLALANG, MARIAANE JANE MIRANDA','mariaanejanemmaglalang@iskolarngbayan.pup.edu.ph',1),('2025-13850-MN-0',NULL,'MEDEL, CYMON JHEP DELAROSA','cymonjhepdmedel@iskolarngbayan.pup.edu.ph',1),('2025-14679-MN-0',NULL,'TAGABAN, CRIS LAURENCE SARZA','crislaurencestagaban@iskolarngbayan.pup.edu.ph',1),('2025-15725-MN-0',NULL,'AMIT, MICAELA JOANNA BATUIGAS','micaelajoannabamit@iskolarngbayan.pup.edu.ph',1),('2025-15964-MN-0',NULL,'UMPAD, AJAY ABES','ajayaumpad@iskolarngbayan.pup.edu.ph',1),('2025-16516-MN-0',NULL,'CRUZ, JAMAICA ELIZA CARYS PEÑAFLOR','jamaicaelizacaryspcruz@iskolarngbayan.pup.edu.ph',1),('2025-17364-MN-0',NULL,'FAUSTINO, JOHN KARL BULACLAC','johnkarlbfaustino@iskolarngbayan.pup.edu.ph',1);
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `study_tasks`
+--
+
+DROP TABLE IF EXISTS `study_tasks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `study_tasks` (
+  `task_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `task` varchar(255) NOT NULL,
+  `due_date` date DEFAULT NULL,
+  `status` enum('Pending','Completed') NOT NULL DEFAULT 'Pending',
+  PRIMARY KEY (`task_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `study_tasks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `study_tasks`
+--
+
+LOCK TABLES `study_tasks` WRITE;
+/*!40000 ALTER TABLE `study_tasks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `study_tasks` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -173,6 +291,7 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `user_Id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('admin','student','professor','student representative') DEFAULT NULL,
@@ -199,4 +318,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-17 10:40:07
+-- Dump completed on 2026-10-19  5:42:40
